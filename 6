@@ -1,0 +1,54 @@
+# Import necessary libraries
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# Step 1: Create the Social Media Interaction Network
+G = nx.Graph()
+
+# Add nodes (Users)
+users = ["Kirti", "Ruchita", "Shravani", "Pranali", "Priti"]
+G.add_nodes_from(users)
+
+# Add edges (Interactions with Likes, Retweets, and Interaction Score)
+edges = [
+    ("Kirti", "Ruchita", {"Likes": 5, "Retweets": 3, "weight": 11}),
+    ("Ruchita", "Shravani", {"Likes": 12, "Retweets": 8, "weight": 28}),
+    ("Shravani", "Pranali", {"Likes": 7, "Retweets": 4, "weight": 15}),
+    ("Pranali", "Priti", {"Likes": 9, "Retweets": 6, "weight": 21}),
+    ("Priti", "Kirti", {"Likes": 15, "Retweets": 10, "weight": 35}),
+]
+
+G.add_edges_from(edges)
+
+# Step 2: Compute Centrality Metrics
+degree_centrality = nx.degree_centrality(G)
+
+# Sort by centrality score
+sorted_centrality = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)
+
+# Display top influencers
+print("\nTop Influencers:")
+for user, score in sorted_centrality:
+    print(f"{user}: Centrality Score = {score:.2f}")
+
+# Step 3: Visualizing the Social Media Network
+plt.figure(figsize=(8, 6))
+pos = nx.spring_layout(G, seed=42)  # Fixed layout for reproducibility
+
+# Draw nodes and edges
+nx.draw_networkx_nodes(G, pos, node_size=3000, node_color="lightblue")
+nx.draw_networkx_edges(G, pos, edge_color="gray", arrows=True)
+nx.draw_networkx_labels(G, pos, font_size=12, font_weight="bold")
+
+# Create edge labels to show both Likes (L) and Retweets (R)
+edge_labels = {(u, v): f"L:{data['Likes']}, R:{data['Retweets']}" for u, v, data in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
+
+plt.title("Social Media Interaction Network")
+plt.axis("off")
+plt.show()
+
+# Step 4: Display Edge Interaction Details
+print("\nEdge Interaction Details:")
+for u, v, data in G.edges(data=True):
+    print(f"{u} -> {v}: Likes = {data['Likes']}, Retweets = {data['Retweets']}, Interaction Score = {data['weight']}")
